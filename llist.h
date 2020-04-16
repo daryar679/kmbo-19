@@ -7,8 +7,17 @@
 
 class LList
 {
-	// HERE WILL BE YOUR CODE
+	struct Node {
+		Node(const double& value, Node* next = nullptr);
+		~Node();
 
+		void insertNext(const double& value);
+		void removeNext();
+
+		ValueType value;
+		Node* next;
+	};
+	
 	public:
 
 	LList();                         // construct new collection
@@ -25,5 +34,10 @@ class LList
 	void insert_at(size_t idx, int val); // insert item at specific position: [1 2 3 4], 1, 5 -> [1 5 2 3 4]
 	void reverse();                  // reverse item sequense: [1 2 3 4] -> [4 3 2 1]
 };
+private:
+	Node* _head;
+	size_t	_size;
+
+	void forceNodeDelete(Node* node);
 
 #endif //LLIST_H
