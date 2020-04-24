@@ -29,8 +29,8 @@ int main()
 	for (size_t i = 0; i < 20000; ++i)
 		l.push_back(3);
 
-	LList c = l; 
-	LList k = move(c);
+	LList copy = l; // valgrind massif: 1,819 мб
+	LList move = move(l);// valgrind massif: 933,1 кб
 
 	return 0;
 }
