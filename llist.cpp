@@ -22,6 +22,62 @@ LList::LList()
 {
 
 }
+LList::LList(const LList& copyList)
+{
+	this->_size = copyList._size;
+	if (this->_size == 0) {
+		this->_head = nullptr;
+		return;
+	}
+
+	this->_head = new Node(copyList._head->value);
+
+	Node* currentNode = this->_head;
+	Node* currentCopyNode = copyList._head;
+
+	while (currentCopyNode->next) {
+		currentCopyNode = currentCopyNode->next;
+		currentNode->next = new Node(currentCopyNode->value);
+		currentNode = currentNode->next;
+	}
+}
+
+LList::LList& operator=(const LList& copyList)
+{
+	if (this == &copyList) {
+		return *this;
+	}
+	LList bufList(copyList);
+	forceNodeDelete(_head);
+	this->_size = bufList._size;
+	this->_head = bufList._head;
+
+	return *this;
+}
+
+LList::LList(LList&& moveList) noexcept
+{
+	this->_size = moveList._size;
+	this->_head = moveList._head;
+
+	moveList._size = 0;
+	moveList._head = nullptr;
+}
+
+LList::LList& operator=(LList&& moveList) noexcept
+{
+	if (this == &moveList) {
+		return *this;
+	}
+	forceNodeDelete(_head);
+	this->_size = moveList._size;
+	this->_head = moveList._head;
+
+	moveList._size = 0;
+	moveList._head = nullptr;
+
+	return *this;
+}
 
 LList::~LList()
 {
