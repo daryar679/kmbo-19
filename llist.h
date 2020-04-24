@@ -20,6 +20,10 @@ class LList
 public:
 
 	LList();                         // construct new collection
+	LList(const LList& copyList);
+	LList& operator=(const LList& copyList);
+	LList(LList&& moveList) noexcept;
+	LList& operator=(LList&& moveList) noexcept;
 	~LList();                        // free resources
 
 	LList::Node* getNode(const size_t idx) const;
