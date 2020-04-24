@@ -25,6 +25,12 @@ int main()
 
 	l.reverse();
 	cout << "Stage 3: "; dump(l); cout << endl;
+	
+	for (size_t i = 0; i < 20000; ++i)
+		l.push_back(3);
+
+	LList c = l; 
+	LList k = move(c);
 
 	return 0;
 }
