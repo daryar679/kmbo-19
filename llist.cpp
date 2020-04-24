@@ -42,7 +42,7 @@ LList::LList(const LList& copyList)
 	}
 }
 
-LList::LList& operator=(const LList& copyList)
+LList& LList::operator=(const LList& copyList)
 {
 	if (this == &copyList) {
 		return *this;
@@ -64,7 +64,7 @@ LList::LList(LList&& moveList) noexcept
 	moveList._head = nullptr;
 }
 
-LList::LList& operator=(LList&& moveList) noexcept
+LList& LList::operator=(LList&& moveList) noexcept
 {
 	if (this == &moveList) {
 		return *this;
