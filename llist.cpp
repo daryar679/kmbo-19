@@ -211,10 +211,13 @@ void LList::forceNodeDelete(Node* node)
 	if (node == nullptr) {
 		return;
 	}
-
-	Node* nextDeleteNode = node->next;
-	delete node;
-	forceNodeDelete(nextDeleteNode);
+	Node* bufNode = node;
+	while(bufNode)
+	{
+		bufNode= buf->next;
+		delete node;
+		node = buf;
+	}
 }
 
 
