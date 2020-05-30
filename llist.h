@@ -7,10 +7,10 @@ template<typename ValueType>
 class LList
 {
 	struct Node {
-		Node(const int& value, Node* next = nullptr);
+		Node(const ValueType& value, Node* next = nullptr);
 		~Node();
 
-		void insertNext(const int& value);
+		void insertNext(const ValueType& value);
 
 		int value;
 		Node* next;
@@ -26,15 +26,15 @@ public:
 	~LList();                        // free resources
 
 	LList::Node* getNode(const size_t idx) const;
-	void push_back(int val);         // add new value at the end:  [1 2 3 4] -> [1 2 3 4 5]
-	void push_front(int val);        // add new value at the begin [1 2 3 4] -> [5 1 2 3 4]
+	void push_back(ValueType val);         // add new value at the end:  [1 2 3 4] -> [1 2 3 4 5]
+	void push_front(ValueType val);        // add new value at the begin [1 2 3 4] -> [5 1 2 3 4]
 	void pop_back();          // remove at the end          [1 2 3 4] -> [1 2 3]
 	void pop_front();         // remove at the front        [1 2 3 4] -> [2 3 4]
 	size_t size() const;             // get actual number of items [1 2 3 4] -> 4
-	int& operator[](size_t idx);     // get rw access ot specific item addressing by idx
-	int  operator[](size_t idx) const; //get read-only access
+	ValueType& operator[](size_t idx);     // get rw access ot specific item addressing by idx
+	ValueType  operator[](size_t idx) const; //get read-only access
 	void erase_at(size_t idx);       // remove item at specific position: [1 2 3 4], 2 -> [1 2 4]
-	void insert_at(size_t idx, int val); // insert item at specific position: [1 2 3 4], 1, 5 -> [1 5 2 3 4]
+	void insert_at(size_t idx, ValueType val); // insert item at specific position: [1 2 3 4], 1, 5 -> [1 5 2 3 4]
 	void reverse();                  // reverse item sequense: [1 2 3 4] -> [4 3 2 1]
 
 private:
@@ -44,7 +44,7 @@ private:
 	void forceNodeDelete(Node* node);
 };
 template<typename ValueType>
-LList<ValueType>::Node::Node(const int& value, Node* next)
+LList<ValueType>::Node::Node(const ValueType& value, Node* next)
 {
 	this->value = value;
 	this->next = next;
@@ -56,7 +56,7 @@ LList<ValueType>::Node::~Node()
 }
 
 template<typename ValueType>
-void LList<ValueType>::Node::insertNext(const int& value)
+void LList<ValueType>::Node::insertNext(const ValueType& value)
 {
 	Node* newNode = new Node(value, this->next);
 	this->next = newNode;
@@ -155,7 +155,7 @@ LList<ValueType>::Node* LList<ValueType>::getNode(const size_t idx) const
 }
 
 template<typename ValueType>
-void LList<ValueType>::push_back(int val)
+void LList<ValueType>::push_back(ValueType val)
 {
 	if (_size == 0) {
 		push_front(val);
@@ -165,7 +165,7 @@ void LList<ValueType>::push_back(int val)
 }
 
 template<typename ValueType>
-void LList<ValueType>::push_front(int val)
+void LList<ValueType>::push_front(ValueType val)
 {
 	_head = new Node(val, _head);
 	++_size;
@@ -190,13 +190,13 @@ size_t LList<ValueType>::size() const
 }
 
 template<typename ValueType>
-int& LList<ValueType>::operator[](size_t idx)
+ValueType& LList<ValueType>::operator[](size_t idx)
 {
 	return getNode(idx)->value;
 }
 
 template<typename ValueType>
-int LList<ValueType>::operator[](size_t idx) const
+ValueType LList<ValueType>::operator[](size_t idx) const
 {
 	return getNode(idx)->value;
 }
@@ -231,7 +231,7 @@ void LList<ValueType>::erase_at(size_t idx)
 }
 
 template<typename ValueType>
-void LList<ValueType>::insert_at(size_t idx, int val)
+void LList<ValueType>::insert_at(size_t idx, ValueType val)
 {
 	if (idx < 0) {
 		assert(idx < 0);
