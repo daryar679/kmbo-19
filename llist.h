@@ -3,8 +3,7 @@
 
 #include <cstddef>
 
-// Linked list of integers
-
+template<typename ValueType> 
 class LList
 {
 	struct Node {
@@ -29,8 +28,8 @@ public:
 	LList::Node* getNode(const size_t idx) const;
 	void push_back(int val);         // add new value at the end:  [1 2 3 4] -> [1 2 3 4 5]
 	void push_front(int val);        // add new value at the begin [1 2 3 4] -> [5 1 2 3 4]
-	void pop_back(int val);          // remove at the end          [1 2 3 4] -> [1 2 3]
-	void pop_front(int val);         // remove at the front        [1 2 3 4] -> [2 3 4]
+	void pop_back();          // remove at the end          [1 2 3 4] -> [1 2 3]
+	void pop_front();         // remove at the front        [1 2 3 4] -> [2 3 4]
 	size_t size() const;             // get actual number of items [1 2 3 4] -> 4
 	int& operator[](size_t idx);     // get rw access ot specific item addressing by idx
 	int  operator[](size_t idx) const; //get read-only access
@@ -44,4 +43,244 @@ private:
 
 	void forceNodeDelete(Node* node);
 };
-#endif //LLIST_H
+template<typename ValueType>
+LList<ValueType>::Node::Node(const int& value, Node* next)
+{
+	this->value = value;
+	this->next = next;
+}
+
+template<typename ValueType>
+LList<ValueType>::Node::~Node()
+{
+}
+
+template<typename ValueType>
+void LList<ValueType>::Node::insertNext(const int& value)
+{
+	Node* newNode = new Node(value, this->next);
+	this->next = newNode;
+}
+
+template<typename ValueType>
+LList<ValueType>::LList()
+	: _head(nullptr), _size(0)
+{
+
+}
+
+template<typename ValueType>
+LList<ValueType>::LList(const LList& copyList)
+{
+	this->_size = copyList._size;
+	if (this->_size == 0) {
+		this->_head = nullptr;
+		return;
+	}
+
+	this->_head = new Node(copyList._head->value);
+
+	Node* currentNode = this->_head;
+	Node* currentCopyNode = copyList._head;
+
+	while (currentCopyNode->next) {
+		currentCopyNode = currentCopyNode->next;
+		currentNode->next = new Node(currentCopyNode->value);
+		currentNode = currentNode->next;
+	}
+}
+
+template<typename ValueType>
+LList<ValueType>& LList<ValueType>::operator=(const LList& copyList)
+{
+	if (this == &copyList) {
+		return *this;
+	}
+	LList bufList(copyList);
+	forceNodeDelete(_head);
+	this->_size = bufList._size;
+	this->_head = bufList._head;
+
+	return *this;
+}
+
+template<typename ValueType>
+LList<ValueType>::LList(LList&& moveList) noexcept
+{
+	this->_size = moveList._size;
+	this->_head = moveList._head;
+
+	moveList._size = 0;
+	moveList._head = nullptr;
+}
+
+template<typename ValueType>
+LList<ValueType>& LList<ValueType>::operator=(LList&& moveList) noexcept
+{
+	if (this == &moveList) {
+		return *this;
+	}
+	forceNodeDelete(_head);
+	this->_size = moveList._size;
+	this->_head = moveList._head;
+
+	moveList._size = 0;
+	moveList._head = nullptr;
+
+	return *this;
+}
+
+template<typename ValueType>
+LList<ValueType>::~LList()
+{
+	forceNodeDelete(_head);
+}
+
+template<typename ValueType>
+LList<ValueType>::Node* LList<ValueType>::getNode(const size_t idx) const
+{
+	if (idx < 0) {
+		assert(idx < 0);
+	}
+	else if (idx >= this->_size) {
+		assert(idx >= this->_size);
+	}
+
+	Node* bufNode = this->_head;
+	for (int i = 0; i < idx; ++i) {
+		bufNode = bufNode->next;
+	}
+
+	return bufNode;
+}
+
+template<typename ValueType>
+void LList<ValueType>::push_back(int val)
+{
+	if (_size == 0) {
+		push_front(val);
+		return;
+	}
+	insert_at(_size, val);
+}
+
+template<typename ValueType>
+void LList<ValueType>::push_front(int val)
+{
+	_head = new Node(val, _head);
+	++_size;
+}
+
+template<typename ValueType>
+void LList<ValueType>::pop_back()
+{
+	erase_at(_size - 1);
+}
+
+template<typename ValueType>
+void LList<ValueType>::pop_front()
+{
+	erase_at(0);
+}
+
+template<typename ValueType>
+size_t LList<ValueType>::size() const
+{
+	return _size;
+}
+
+template<typename ValueType>
+int& LList<ValueType>::operator[](size_t idx)
+{
+	return getNode(idx)->value;
+}
+
+template<typename ValueType>
+int LList<ValueType>::operator[](size_t idx) const
+{
+	return getNode(idx)->value;
+}
+
+template<typename ValueType>
+void LList<ValueType>::erase_at(size_t idx)
+{
+	if (idx < 0) {
+		assert(idx < 0);
+	}
+	else if (idx > this->_size) {
+		assert(idx > this->_size);
+	}
+
+	if (idx == 0)
+	{
+		Node* bufNode = _head;
+		_head = _head->next;
+		delete bufNode;
+	}
+	else
+	{
+		Node* bufNode = this->_head;
+		for (size_t i = 0; i < idx - 1; ++i) {
+			bufNode = bufNode->next;
+		}
+		Node* deleteNode = bufNode->next;
+		bufNode->next = deleteNode->next;
+		delete deleteNode;
+	}
+	_size--;
+}
+
+template<typename ValueType>
+void LList<ValueType>::insert_at(size_t idx, int val)
+{
+	if (idx < 0) {
+		assert(idx < 0);
+	}
+	else if (idx > this->_size) {
+		assert(idx > this->_size);
+	}
+
+	if (idx == 0) {
+		push_front(val);
+	}
+	else {
+		Node* bufNode = this->_head;
+		for (size_t i = 0; i < idx - 1; ++i) {
+			bufNode = bufNode->next;
+		}
+		bufNode->insertNext(val);
+		++_size;
+	}
+}
+
+template<typename ValueType>
+void LList<ValueType>::reverse()
+{
+	Node* bufNode = _head;
+	Node* next = nullptr;
+	Node* prev = nullptr;
+	while (bufNode != nullptr)
+	{
+		next = bufNode->next;
+		bufNode->next = prev;
+		prev = bufNode;
+		bufNode = next;
+	}
+	_head = prev;
+}
+
+template<typename ValueType>
+void LList<ValueType>::forceNodeDelete(Node* node)
+{
+	if (node == nullptr) {
+		return;
+	}
+	Node* deleteNode = node;
+	while (deleteNode)
+	{
+		Node* nextDeleteNode = deleteNode->next;
+		delete deleteNode;
+		node = deleteNode;
+	}
+}
+#endif 
